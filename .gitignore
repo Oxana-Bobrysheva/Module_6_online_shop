@@ -16,6 +16,7 @@ sqlite
 # VSCode or PyCharm settings (optional)
 .vscode/
 .idea/
+.idea
 
 # OS files
 .DS_Store
