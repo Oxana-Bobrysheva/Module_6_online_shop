@@ -3,5 +3,6 @@ attrs==23.2.0
 Babel==2.10.3
 Django==5.2.3
 psycopg2-binary==2.9.10
+python-dotenv==1.1.1
 pytz==2025.2
 sqlparse==0.5.3
