@@ -7,10 +7,12 @@ click==8.2.1
 decorator==5.2.1
 Django==5.2.3
 executing==2.2.0
+flake8==7.3.0
 ipython==9.3.0
 ipython_pygments_lexers==1.1.1
 jedi==0.19.2
 matplotlib-inline==0.1.7
+mccabe==0.7.0
 mypy_extensions==1.1.0
 packaging==25.0
 parso==0.8.4
@@ -22,6 +24,8 @@ prompt_toolkit==3.0.51
 psycopg2-binary==2.9.10
 ptyprocess==0.7.0
 pure_eval==0.2.3
+pycodestyle==2.14.0
+pyflakes==3.4.0
 Pygments==2.19.2
 python-dotenv==1.1.1
 pytz==2025.2

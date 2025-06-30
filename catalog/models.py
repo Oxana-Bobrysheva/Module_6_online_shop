@@ -3,7 +3,9 @@ from django.db import models
 
 # Create your models here.
 class Product(models.Model):
-    product_name = models.CharField(max_length=100, verbose_name="Наименование")
+    product_name = models.CharField(
+        max_length=100, verbose_name="Наименование"
+    )
     product_description = models.TextField()
     product_image = models.ImageField(
         upload_to="images/", blank=True, null=True, verbose_name="Изображение"
@@ -26,7 +28,10 @@ class Product(models.Model):
     )
 
     def __str__(self):
-        return f"{self.product_name} вы можете приобрести сегодня за {self.purchase_price} рублей."
+        return (
+            f"{self.product_name} вы можете приобрести сегодня "
+            f"за {self.purchase_price} рублей."
+        )
 
     class Meta:
         verbose_name = "Продукт"

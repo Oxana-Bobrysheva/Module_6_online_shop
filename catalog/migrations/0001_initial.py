@@ -30,7 +30,9 @@ class Migration(migrations.Migration):
                 (
                     "category_description",
                     models.TextField(
-                        blank=True, null=True, verbose_name="Описание категории"
+                        blank=True,
+                        null=True,
+                        verbose_name="Описание категории",
                     ),
                 ),
             ],
@@ -54,7 +56,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "product_name",
-                    models.CharField(max_length=100, verbose_name="Наименование"),
+                    models.CharField(
+                        max_length=100, verbose_name="Наименование"
+                    ),
                 ),
                 ("product_description", models.TextField()),
                 (
@@ -69,19 +73,23 @@ class Migration(migrations.Migration):
                 (
                     "purchase_price",
                     models.DecimalField(
-                        decimal_places=2, max_digits=10, verbose_name="Цена покупки"
+                        decimal_places=2,
+                        max_digits=10,
+                        verbose_name="Цена покупки",
                     ),
                 ),
                 (
                     "created_at",
                     models.DateField(
-                        auto_now_add=True, verbose_name="Дата создания продукта"
+                        auto_now_add=True,
+                        verbose_name="Дата создания продукта",
                     ),
                 ),
                 (
                     "updated_at",
                     models.DateField(
-                        auto_now=True, verbose_name="Дата последнего изменения продукта"
+                        auto_now=True,
+                        verbose_name="Дата последнего изменения продукта",
                     ),
                 ),
                 (
