@@ -6,7 +6,7 @@ class Product(models.Model):
     product_name = models.CharField(
         max_length=100, verbose_name="Наименование"
     )
-    product_description = models.TextField()
+    product_description = models.TextField(verbose_name="Описание продукта")
     product_image = models.ImageField(
         upload_to="images/", blank=True, null=True, verbose_name="Изображение"
     )
@@ -16,6 +16,7 @@ class Product(models.Model):
         null=True,
         blank=True,
         related_name="products",
+        verbose_name="Категория"
     )
     purchase_price = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Цена покупки"
