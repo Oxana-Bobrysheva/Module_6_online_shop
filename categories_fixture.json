@@ -1,0 +1,26 @@
+[
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "category_name": "Фрукты",
+        "category_description": "Фрукты выращенные в Зоринских садах Обоянского района"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "category_name": "Овощи",
+        "category_description": "Овощи выращенные в фермерском хозяйстве Обоянского района"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+        "category_name": "Зелень",
+        "category_description": null
+    }
+}
+]

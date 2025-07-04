@@ -52,6 +52,48 @@
 - Убедитесь, что в `settings.py` добавлено `'catalog'` в `INSTALLED_APPS`.
 - Настройте `STATIC_URL` и `STATICFILES_DIRS` для корректной работы статики.
 
+## Настройка подключения к базе данных через `.env`
+
+Для удобства и безопасности параметры подключения к базе данных хранятся в файле `.env`. В репозитории есть пример файла `.env.example` с шаблоном переменных окружения.
+
+### Шаги:
+
+1. Создайте копию файла `.env.example` и назовите её `.env`:
+
+```bash
+cp .env.example .env
+```
+2. Отредактируйте .env, указав свои данные подключения к PostgreSQL:
+
+```
+DB_NAME=your_db_name
+DB_USER=your_db_user
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+```
+3. В settings.py используйте библиотеку python-dotenv или django-environ для загрузки переменных окружения.
+Пример с python-dotenv:
+```
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+    }
+}
+```
+4. Убедитесь, что файл .env добавлен в .gitignore, чтобы не заливать его в публичный репозиторий.
+
 ## Контакты
+bobrysheva_oxana@mail.ru
 
 Если есть вопросы, пишите в issues или отправляйте pull request.
