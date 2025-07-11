@@ -56,9 +56,8 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "product_name",
-                    models.CharField(
-                        max_length=100, verbose_name="Наименование"
-                    ),
+                    models.CharField(max_length=100,
+                                     verbose_name="Наименование"),
                 ),
                 ("product_description", models.TextField()),
                 (
