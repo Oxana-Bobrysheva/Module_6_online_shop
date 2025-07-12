@@ -1,0 +1,26 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Создать статью - Обояшки{% endblock %}
+
+{% block content %}
+<h1>
+  {% if is_update %}
+    Редактировать статью
+  {% else %}
+    Создать статью
+  {% endif %}
+</h1>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">
+    {% if is_update %}
+      Сохранить
+    {% else %}
+      Создать
+    {% endif %}
+  </button>
+    <a href="{% url 'blog:article_list' %}" class = "btn btn-warning">Cancel</a>
+</form>
+{% endblock %}

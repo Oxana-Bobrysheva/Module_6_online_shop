@@ -22,7 +22,8 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("title", models.CharField(max_length=200, verbose_name="Заголовок")),
+                ("title", models.CharField(max_length=200,
+                                           verbose_name="Заголовок")),
                 ("text", models.TextField(verbose_name="Содержимое статьи")),
                 (
                     "image",
@@ -41,7 +42,8 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "is_published",
-                    models.BooleanField(default=False, verbose_name="Опубликовано"),
+                    models.BooleanField(default=False,
+                                        verbose_name="Опубликовано"),
                 ),
                 (
                     "views_count",
