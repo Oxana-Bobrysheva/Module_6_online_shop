@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ article.title }}</title>
+</head>
+<body>
+    <h1>{{ article.title }}</h1>
+    <p><em>Published on {{ article.created_at|date:"F j, Y" }}</em></p>
+    {% if article.image %}
+        <img src="{{ article.image.url }}" alt="{{ article.title }}" style="max-width:600px;" />
+    {% endif %}
+    <div>
+        {{ article.text|linebreaks }}
+    </div>
+    <p><strong>Views:</strong> {{ article.views_count }}</p>
+    <p><a href="{% url 'blog:article_list' %}">Back to list</a></p>
+</body>
+</html>
