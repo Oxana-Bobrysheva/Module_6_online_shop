@@ -1,6 +1,8 @@
 import re
 
 from django import forms
+from django.core.exceptions import ValidationError
+
 from .models import Product
 
 
@@ -39,3 +41,10 @@ class ProductForm(forms.ModelForm):
                 break
 
         return cleaned_data
+
+    def clean_purchase_price(self):
+        price = self.cleaned_data.get('purchase_price')
+
+        if price <= 0:
+            raise ValidationError("Цена продукта не может быть отрицательной или равной нулю!")
+        return price
