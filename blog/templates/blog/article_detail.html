@@ -1,0 +1,19 @@
+{% extends "blog/base.html" %}
+
+{% block title %}{{ article.title }} - Обояшки{% endblock %}
+
+{% block content %}
+<article>
+    <h1>{{ article.title }}</h1>
+    <h4>{{ article.text }}</h4>
+    {% if article.image %}
+    <img src="{{ article.image.url }}" alt="{{ article.title }}" style="max-width:100%; height:auto;">
+{% endif %}
+    <a href="{% url 'blog:article_update' article.pk %}">Редактировать</a>
+    <p><small class="text-muted">Опубликовано {{ article.created_at|date:"d.m.Y H:i" }}</small></p>
+    <div>
+        {{ article.content|linebreaks }}
+    </div>
+    <a href="{% url 'blog:article_list' %}">← Назад к списку статей</a>
+</article>
+{% endblock %}
