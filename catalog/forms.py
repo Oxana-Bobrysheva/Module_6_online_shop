@@ -2,6 +2,7 @@ import re
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import UploadedFile
 
 from .models import Product
 
@@ -61,20 +62,21 @@ class ProductForm(forms.ModelForm):
             raise ValidationError("Цена продукта не может быть отрицательной или равной нулю!")
         return price
 
-
     def clean_product_image(self):
         image = self.cleaned_data.get('product_image')
 
         if image:
-            # Проверяем формат
-            valid_mime_types = ['image/jpeg', 'image/png']
-            file_mime_type = image.content_type
-            if file_mime_type not in valid_mime_types:
-                raise ValidationError('Поддерживаются только форматы JPEG и PNG.')
+            # Проверяем, что это загруженный файл (новый файл из формы)
+            if isinstance(image, UploadedFile):
+                # Проверяем MIME-тип файла
+                valid_mime_types = ['image/jpeg', 'image/jpg', 'image/png']
+                file_mime_type = image.content_type
+                if file_mime_type not in valid_mime_types:
+                    raise ValidationError('Поддерживаются только форматы JPEG и PNG.')
 
-            # Проверяем размер
-            max_size = 5 * 1024 * 1024  # 5 МБ
-            if image.size > max_size:
-                raise ValidationError('Размер файла не должен превышать 5 МБ.')
+                # Проверяем размер файла
+                max_size = 5 * 1024 * 1024  # 5 МБ
+                if image.size > max_size:
+                    raise ValidationError('Размер файла не должен превышать 5 МБ.')
 
         return image
