@@ -21,6 +21,16 @@ class ProductForm(forms.ModelForm):
             "purchase_price",
         ]
         exclude = ["created_at", "updated_at"]
+    def __init__(self, *args, **kwargs):
+        super(ProductForm, self).__init__(*args, **kwargs)
+        self.fields['product_name'].widget.attrs.update({'class': 'form-control',
+                                                         'placeholder': 'Введите название продукта'})
+        self.fields['product_description'].widget.attrs.update({'class': 'form-control',
+                                                        'placeholder': 'Введите описание продукта'})
+        self.fields['product_image'].widget.attrs.update({'class': 'form-control'})
+        self.fields['category'].widget.attrs.update({'class': 'form-control'})
+        self.fields['purchase_price'].widget.attrs.update({'class': 'form-control',
+                                                        'placeholder': 'Введите цену', 'type': 'float'})
 
     def clean(self):
         cleaned_data = super().clean()
