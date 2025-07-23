@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = []
+    dependencies: list[tuple[str, str]] = []
 
     operations = [
         migrations.CreateModel(
@@ -56,8 +56,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "product_name",
-                    models.CharField(max_length=100,
-                                     verbose_name="Наименование"),
+                    models.CharField(max_length=100, verbose_name="Наименование"),
                 ),
                 ("product_description", models.TextField()),
                 (

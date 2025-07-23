@@ -3,8 +3,7 @@ from django.db import models
 
 # Create your models here.
 class Product(models.Model):
-    product_name = models.CharField(max_length=100,
-                                    verbose_name="Наименование")
+    product_name = models.CharField(max_length=100, verbose_name="Наименование")
     product_description = models.TextField(verbose_name="Описание продукта")
     product_image = models.ImageField(
         upload_to="images/", blank=True, null=True, verbose_name="Изображение"

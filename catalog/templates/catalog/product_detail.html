@@ -15,4 +15,6 @@
 <p>{{ product.product_description|linebreaks }}</p>
 
 <a href="{% url 'catalog:home' %}">← Вернуться к списку товаров</a>
+<a href="{% url 'catalog:product_update' product.pk %}" class = 'btn btn-warning'>Редактировать</a>
+<a href="{% url 'catalog:product_confirm_delete' product.pk %}" class = 'btn btn-danger'>Удалить</a>
 {% endblock %}
