@@ -31,6 +31,7 @@ class ProductForm(forms.ModelForm):
         ]
         exclude = ["created_at", "updated_at"]
 
+
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
         self.fields["product_name"].widget.attrs.update(
@@ -45,10 +46,9 @@ class ProductForm(forms.ModelForm):
             {"class": "form-control", "placeholder": "Введите цену", "type": "float"}
         )
 
-    def clean(self):
-        cleaned_data = super().clean()
-        product_name = cleaned_data.get("product_name")
-        product_description = cleaned_data.get("product_description")
+
+    def clean_product_name(self):
+        product_name = self.cleaned_data.get("product_name")
 
         for word in forbidden_words:
             pattern = rf"\b{re.escape(word)}\b"
@@ -58,8 +58,15 @@ class ProductForm(forms.ModelForm):
                     f'Внимание! Слово "{word}" не может быть использовано в названии продукта!',
                 )
                 break
+
+        return product_name
+
+
+    def clean_product_description(self):
+        product_description = self.cleaned_data.get("product_description")
+
         for word in forbidden_words:
-            pattern = rf"\b{re.escape(word)}\b"
+            pattern: str = rf"\b{re.escape(word)}\b"
             if re.search(pattern, product_description, re.IGNORECASE):
                 self.add_error(
                     "product_description",
@@ -67,7 +74,8 @@ class ProductForm(forms.ModelForm):
                 )
                 break
 
-        return cleaned_data
+        return product_description
+
 
     def clean_purchase_price(self):
         price = self.cleaned_data.get("purchase_price")
@@ -77,6 +85,7 @@ class ProductForm(forms.ModelForm):
                 "Цена продукта не может быть отрицательной или равной нулю!"
             )
         return price
+
 
     def clean_product_image(self):
         image = self.cleaned_data.get("product_image")
