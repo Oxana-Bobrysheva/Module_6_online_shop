@@ -6,6 +6,7 @@ black==25.1.0
 click==8.2.1
 decorator==5.2.1
 Django==5.2.3
+django-mixins==0.0.10
 django-phonenumber-field==8.1.0
 executing==2.2.0
 flake8==7.3.0
