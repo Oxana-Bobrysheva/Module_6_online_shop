@@ -25,6 +25,7 @@ class Product(models.Model):
     updated_at = models.DateField(
         auto_now=True, verbose_name="Дата последнего изменения продукта"
     )
+    status = models.BooleanField(default=False)
 
     def __str__(self):
         return (
@@ -36,6 +37,7 @@ class Product(models.Model):
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
         ordering = ["category__category_name", "product_name"]
+        permissions = [('can_unpublish_product', 'Can unpublish product'),]
 
 
 class Category(models.Model):
