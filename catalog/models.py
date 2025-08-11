@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models import ForeignKey
+
+from users.models import User
 
 
 # Create your models here.
@@ -26,6 +29,8 @@ class Product(models.Model):
         auto_now=True, verbose_name="Дата последнего изменения продукта"
     )
     status = models.BooleanField(default=False)
+    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца продукта",
+                              blank=True, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return (
