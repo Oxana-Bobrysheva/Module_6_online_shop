@@ -34,6 +34,7 @@ pyflakes==3.4.0
 Pygments==2.19.2
 python-dotenv==1.1.1
 pytz==2025.2
+redis==6.4.0
 sqlparse==0.5.3
 stack-data==0.6.3
 traitlets==5.14.3
