@@ -1,14 +1,34 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
-from pure_eval.my_getattr_static import method_descriptor
 
 from .forms import ProductForm, ProductModeratorForm
-from .models import Product
+from .models import Product, Category
+from .services import get_products_by_category
+from django.shortcuts import render, get_object_or_404
+
+
+def home(request):
+    categories = Category.objects.all()  # Извлекаем все категории
+    selected_category_id = request.GET.get('category', '')  # Получаем выбранную категорию из GET-запроса
+
+    # Если выбрана категория, фильтруем продукты по ней
+    if selected_category_id:
+        products = Product.objects.filter(category_id=selected_category_id)
+    else:
+        products = Product.objects.all()  # Или все продукты, если категория не выбрана
+
+    context = {
+        'categories': categories,
+        'products': products,
+        'selected_category_id': selected_category_id,
+    }
+    return render(request, 'home.html', context)
 
 
 class ProductListView(ListView):
@@ -29,7 +49,7 @@ class ContactsView(TemplateView):
         print(f"Новое сообщение от {name}, телефон: {phone}. Текст: {message}")
         return self.render_to_response(self.get_context_data(success=True))
 
-@method_descriptor(cache_page(60 * 15), name='dispatch')
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = "catalog/product_detail.html"
@@ -90,3 +110,22 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if product.owner == self.request.user:
             return True
         return self.request.user.groups.filter(name="Moderators of products").exists()
+
+
+class ProductListByCategoryView(ListView):
+    model = Product
+    template_name = 'catalog/product_list_by_category.html'
+    context_object_name = "products"
+
+    def get_queryset(self):
+        category_id = self.kwargs.get('category_id')
+        category = get_object_or_404(Category, id=category_id)
+        return get_products_by_category(category)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs.get('category_id')
+        print(f"Category ID: {category_id}")  # Логируем category_id
+        context['categories'] = Category.objects.all()  # Получаем все категории
+        context['category'] = get_object_or_404(Category, id=category_id)
+        return context
