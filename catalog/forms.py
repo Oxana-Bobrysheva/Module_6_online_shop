@@ -29,7 +29,7 @@ class ProductForm(forms.ModelForm):
             "category",
             "purchase_price",
         ]
-        exclude = ["created_at", "updated_at", "owner"]
+        exclude = ["created_at", "updated_at", "owner", "status"]
 
 
     def __init__(self, *args, **kwargs):

@@ -1,7 +1,7 @@
 {% extends "catalog/base.html" %}
 
 {% block content %}
-  {% if product.owner == request.user %}
+  {% if product.owner == request.user or is_moderator %}
   <h1>Удалить продукт "{{ object.product_name }}"?</h1>
 
   <form method="post">

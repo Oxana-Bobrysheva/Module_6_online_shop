@@ -75,4 +75,4 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         product = self.get_object()
         if product.owner == self.request.user:
             return True
-        return self.request.user.groups.filter(name="Moderator of products")
+        return self.request.user.groups.filter(name="Moderators of products").exists()
