@@ -1,19 +1,20 @@
 {% extends "catalog/base.html" %}
 
-{% block title %}Каталог - Обояшки{% endblock %}
-
 {% block content %}
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-    <h1 class="display-4">Обояшки</h1>
+<h1>Продукты по категориям</h1>
 
-    <p class="lead">Обояшки - это лучшее место для закупки свежих овощей, фруктов и зелени,
-        выращенных нашими фермерами в Обоянском районе Курской области!</p>
-        <p class="lead"> Чтобы посмотреть товары по категориям, перейдите ...
-    <a href="{% url 'catalog:product_list_by_category' category_id=1 %}">сюда</a></p>
-</div>
+    <div>
+        <h2>Выберите категорию</h2>
+        <ul>
+            {% for category in categories %}
+                <li><a href="{% url 'catalog:product_list_by_category' category_id=category.id %}">{{ category.category_name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
 
-<div class="row">
-    {% for product in page_obj %}
+    <h2>Список продуктов в категории {{ category.category_name }}</h2>
+    <div class="row">
+    {% for product in products %}
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm" >
                 {% if product.product_image %}
@@ -83,4 +84,6 @@
     {% endif %}
   </ul>
 </nav>
+
+    <a href="{% url 'catalog:home' %}">Вернуться на главную страницу</a>
 {% endblock %}
