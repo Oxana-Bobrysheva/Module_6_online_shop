@@ -1,8 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
+from django.views.decorators.cache import cache_page
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
+from pure_eval.my_getattr_static import method_descriptor
 
 from .forms import ProductForm, ProductModeratorForm
 from .models import Product
@@ -26,7 +29,7 @@ class ContactsView(TemplateView):
         print(f"Новое сообщение от {name}, телефон: {phone}. Текст: {message}")
         return self.render_to_response(self.get_context_data(success=True))
 
-
+@method_descriptor(cache_page(60 * 15), name='dispatch')
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = "catalog/product_detail.html"
@@ -65,6 +68,17 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         if user.has_perm("catalog.can_unpublish_product"):
             return ProductModeratorForm
         raise PermissionDenied
+
+    def form_valid(self, form):
+        # Сначала вызываем метод родительского класса для сохранения формы
+        response = super().form_valid(form)
+
+        # Очистка кэша для страницы продукта
+        cache_key = f'product_detail_{self.object.pk}'
+        cache.delete(cache_key)
+
+        return response
+
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Product
