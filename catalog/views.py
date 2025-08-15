@@ -38,6 +38,17 @@ class ProductListView(ListView):
     paginate_by = 6
     ordering = ["id"]
 
+    def get_queryset(self):
+        cache_key = 'product_list'
+
+        products = cache.get(cache_key)
+
+        if products is None:
+            products = super().get_queryset()
+            cache.set(cache_key, products, 60 * 15)
+
+        return products
+
 
 class ContactsView(TemplateView):
     template_name = "catalog/contacts.html"
@@ -72,6 +83,9 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         product = form.save(commit=False)
         product.owner = self.request.user
         product.save()
+
+        cache.delete('product_list')
+
         return super().form_valid(form)
 
 
@@ -111,6 +125,11 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return True
         return self.request.user.groups.filter(name="Moderators of products").exists()
 
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        cache.delete('product_list')
+
+        return response
 
 class ProductListByCategoryView(ListView):
     model = Product
@@ -125,7 +144,7 @@ class ProductListByCategoryView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         category_id = self.kwargs.get('category_id')
-        print(f"Category ID: {category_id}")  # Логируем category_id
+
         context['categories'] = Category.objects.all()  # Получаем все категории
         context['category'] = get_object_or_404(Category, id=category_id)
         return context
