@@ -29,7 +29,7 @@ class ProductForm(forms.ModelForm):
             "category",
             "purchase_price",
         ]
-        exclude = ["created_at", "updated_at"]
+        exclude = ["created_at", "updated_at", "owner", "status"]
 
 
     def __init__(self, *args, **kwargs):
@@ -105,3 +105,8 @@ class ProductForm(forms.ModelForm):
                     raise ValidationError("Размер файла не должен превышать 5 МБ.")
 
         return image
+
+class ProductModeratorForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ["status",]
