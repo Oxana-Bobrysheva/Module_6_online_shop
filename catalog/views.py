@@ -1,11 +1,34 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
 
 from .forms import ProductForm, ProductModeratorForm
-from .models import Product
+from .models import Product, Category
+from .services import get_products_by_category
+from django.shortcuts import render, get_object_or_404
+
+
+def home(request):
+    categories = Category.objects.all()  # Извлекаем все категории
+    selected_category_id = request.GET.get('category', '')  # Получаем выбранную категорию из GET-запроса
+
+    # Если выбрана категория, фильтруем продукты по ней
+    if selected_category_id:
+        products = Product.objects.filter(category_id=selected_category_id)
+    else:
+        products = Product.objects.all()  # Или все продукты, если категория не выбрана
+
+    context = {
+        'categories': categories,
+        'products': products,
+        'selected_category_id': selected_category_id,
+    }
+    return render(request, 'home.html', context)
 
 
 class ProductListView(ListView):
@@ -14,6 +37,17 @@ class ProductListView(ListView):
     context_object_name = "model"
     paginate_by = 6
     ordering = ["id"]
+
+    def get_queryset(self):
+        cache_key = 'product_list'
+
+        products = cache.get(cache_key)
+
+        if products is None:
+            products = super().get_queryset()
+            cache.set(cache_key, products, 60 * 15)
+
+        return products
 
 
 class ContactsView(TemplateView):
@@ -26,7 +60,7 @@ class ContactsView(TemplateView):
         print(f"Новое сообщение от {name}, телефон: {phone}. Текст: {message}")
         return self.render_to_response(self.get_context_data(success=True))
 
-
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = "catalog/product_detail.html"
@@ -49,6 +83,9 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         product = form.save(commit=False)
         product.owner = self.request.user
         product.save()
+
+        cache.delete('product_list')
+
         return super().form_valid(form)
 
 
@@ -66,6 +103,17 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
             return ProductModeratorForm
         raise PermissionDenied
 
+    def form_valid(self, form):
+        # Сначала вызываем метод родительского класса для сохранения формы
+        response = super().form_valid(form)
+
+        # Очистка кэша для страницы продукта
+        cache_key = f'product_detail_{self.object.pk}'
+        cache.delete(cache_key)
+
+        return response
+
+
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Product
     template_name = "catalog/product_confirm_delete.html"
@@ -76,3 +124,27 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if product.owner == self.request.user:
             return True
         return self.request.user.groups.filter(name="Moderators of products").exists()
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        cache.delete('product_list')
+
+        return response
+
+class ProductListByCategoryView(ListView):
+    model = Product
+    template_name = 'catalog/product_list_by_category.html'
+    context_object_name = "products"
+
+    def get_queryset(self):
+        category_id = self.kwargs.get('category_id')
+        category = get_object_or_404(Category, id=category_id)
+        return get_products_by_category(category)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs.get('category_id')
+
+        context['categories'] = Category.objects.all()  # Получаем все категории
+        context['category'] = get_object_or_404(Category, id=category_id)
+        return context
